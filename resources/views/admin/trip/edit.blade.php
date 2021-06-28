@@ -1,0 +1,284 @@
+@extends('base.baseAdmin')
+
+@section('title', 'Edit trip')
+
+@section('link')
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/global/plugins/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/global/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css')}}" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <link href="{{asset('assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css')}}" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="{{asset('assets/global/css/components.min.css')}}" rel="stylesheet" id="style_components" type="text/css" />
+    <link href="{{asset('assets/global/css/plugins.min.css')}}" rel="stylesheet" type="text/css" />
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="{{asset('assets/pages/css/profile-2.min.css')}}" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link href="{{asset('assets/layouts/layout/css/layout.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{asset('assets/layouts/layout/css/themes/darkblue.min.css')}}" rel="stylesheet" type="text/css" id="style_color" />
+    <link href="{{asset('assets/layouts/layout/css/custom.min.css')}}" rel="stylesheet" type="text/css" />
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="favicon.ico" />
+@endsection
+
+@section('content')
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <!-- BEGIN PAGE HEADER-->
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="index.html">Home</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Trip</span>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Edit</span>
+                </li>
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- END PAGE HEADER-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tabbable-line boxless tabbable-reversed">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab_0">
+                            <div class="portlet box green">
+                                <div class="portlet-body form">
+                                    <!-- BEGIN FORM-->
+                                    <form method="post" id="submit" action="{{route('trip.update', $trip->id)}}" enctype="multipart/form-data" class="form-horizontal">
+                                        @method('put')
+                                        @csrf
+                                            <input type="hidden" class="form-control input-circle" name="id" value="{{$trip->id}}">
+                                            <div class="portlet-body">
+                                                <div class="tabbable-bordered">
+                                                    <ul class="nav nav-tabs">
+                                                        @foreach(LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                                            <li>
+                                                                <a rel="alternate" hreflang="{{ $localeCode }}" data-toggle="tab" href="#tab_lang_{{$localeCode}}">
+                                                                    {{ $properties['native'] }}
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                        <li>
+                                                            <a href="#tab_price" data-toggle="tab"> Price </a>
+                                                        </li> 
+                                                        <li>
+                                                            <a href="#tab_images" data-toggle="tab"> Image </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#tab_banner" data-toggle="tab"> Banner </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#tab_album" data-toggle="tab"> Album </a>
+                                                        </li>
+                                                    </ul>
+                                                    <div class="tab-content">
+                                                        @foreach(LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                                            <div class="tab-pane fade @if ($loop->first) active in @endif " id="tab_lang_{{$localeCode}}">
+                                                                @php
+                                                                    $local_old = app()->getLocale();
+                                                                    app()->setLocale($localeCode);
+                                                                @endphp
+                                                                <div class="form-group">
+                                                                    <label class="col-md-2 control-label">{{__('Title')}}:
+                                                                        <span class="required"> * </span>
+                                                                    </label>
+                                                                    <div class="col-md-10">
+                                                                        <input type="text" class="form-control" name="title[{{$localeCode}}]" value="{{$trip->translate($localeCode)['title']}}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-md-2 control-label">{{__('Description')}}:
+                                                                        <span class="required"> * </span>
+                                                                    </label>
+                                                                    <div class="col-md-10">
+                                                                        <textarea class="form-control" id="placeTextarea" rows="3" name="description[{{$localeCode}}]">{{$trip->translate($localeCode)['description']}}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-md-2 control-label">{{__('Meta Data')}}:
+                                                                        <span class="required"> * </span>
+                                                                    </label>
+                                                                    <div class="col-md-10">
+                                                                        <textarea class="form-control" name="metaData[{{$localeCode}}]">{{$trip->translate($localeCode)['metaData']}}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-md-2 control-label">{{__('Meta Description')}}:
+                                                                        <span class="required"> * </span>
+                                                                    </label>
+                                                                    <div class="col-md-10">
+                                                                        <textarea class="form-control" name="metaDescription[{{$localeCode}}]">{{$trip->translate($localeCode)['metaDescription']}}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="col-md-2 control-label">{{__('Meta Keywords')}}:
+                                                                        <span class="required"> * </span>
+                                                                    </label>
+                                                                    <div class="col-md-10">
+                                                                        <textarea class="form-control" name="keywords[{{$localeCode}}]">{{$trip->translate($localeCode)['keywords']}}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @php
+                                                                app()->setLocale($local_old);
+                                                            @endphp
+                                                        @endforeach
+                                                        <div class="tab-pane" id="tab_price">
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 control-label">{{__('Price')}}:
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-10">
+                                                                    <input type="text" class="form-control" name="price" value="{{$trip->price}}"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 control-label">{{__('Offer')}}:
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-10">
+                                                                    <input type="text" class="form-control" name="offer" value="{{$trip->offer}}"></div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="col-md-2 control-label">{{__('Date')}}:
+                                                                    <span class="required"> * </span>
+                                                                </label>
+                                                                <div class="col-md-10">
+                                                                    <input type="text" class="form-control" name="date" value="{{$trip->date}}"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane" id="tab_images">
+                                                            <div class="form-group">
+                                                                <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                                    <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                                                        <img src="{{asset($trip->image_url)}}"/> </div>
+                                                                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+                                                                    <div>
+                                                                        <span class="btn default btn-file">
+                                                                            <span class="fileinput-new"> {{__('Select image')}} </span>
+                                                                            <span class="fileinput-exists"> {{__('Change')}} </span>
+                                                                            <input type="file" name="image"> </span>
+                                                                        <a href="javascript:;" class="btn default fileinput-exists" data-dismiss="fileinput"> {{__('Remove')}} </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane" id="tab_banner">
+                                                            <div class="form-group">
+                                                                <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                                    <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                                                        <img src="{{asset($trip->banner_url)}}"/> </div>
+                                                                    <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+                                                                    <div>
+                                                                        <span class="btn default btn-file">
+                                                                            <span class="fileinput-new"> {{__('Select image')}} </span>
+                                                                            <span class="fileinput-exists"> {{__('Change')}} </span>
+                                                                            <input type="file" name="banner"> </span>
+                                                                        <a href="javascript:;" class="btn default fileinput-exists" data-dismiss="fileinput"> {{__('Remove')}} </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane" id="tab_album">
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group has-feedback">
+                                                                        <label class="custom-file center-block block">
+                                                                            <input id="file" multiple class="custom-file-input" type="file" name="album[]">
+                                                                            <span class="custom-file-control"></span> </label>
+                                                                        </div>
+                                                                        @error('album')
+                                                                        <div class="alert alert-danger">{{ $message }}</div>
+                                                                        @enderror
+                                                                    </div>
+                                                                </div>
+                                                                @if($trip->hasMedia('trip'))
+                                                                    @foreach($trip->getMedia('trip') as $key => $media)
+                                                                        <div class="col-md-2">
+                                                                            <img class="img-responsive" {{-- style="max-width: 100%; hight:100px" --}} src="{{ asset('images/'.$media->getDiskPath()) }}"> 
+                                                                            <a href="{{route('deleteImageTrip',$media->id)}}" class="title"
+                                                                                {{-- onclick="event.preventDefault();
+                                                                                                document.getElementById('media-{{$media->id}}').submit();" --}}>
+                                                                                <i class="fa fa-times"></i> {{ __('Remove') }}
+                                                                            </a>
+                                                                            {{-- <form id="media-{{$media->id}}" action="{{ route('deleteImageTrip',$media->id) }}" 
+                                                                                method="POST" >
+                                                                                @method('put')
+                                                                                @csrf
+                                                                            </form> --}}
+                                                                        </div>
+                                                                    @endforeach                                                
+                                                                @endif 
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-actions">
+                                                <div class="row">
+                                                    <div class="col-md-offset-3 col-md-9">
+                                                        <button type="submit" class="btn btn-circle green" class="title"
+                                                            onclick="event.preventDefault();
+                                                                            document.getElementById('submit').submit();">
+                                                            {{ __('Submit') }}
+                                                        </button>
+                                                        {{-- <button type="submit" class="btn btn-circle green">Submit</button> --}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </form>
+                                    <!-- END FORM-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+@endsection 
+
+@section('script')
+    <!-- BEGIN CORE PLUGINS -->
+    <script src="{{asset('assets/global/plugins/jquery.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/global/plugins/bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/global/plugins/js.cookie.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/global/plugins/jquery.blockui.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js')}}" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="{{asset('assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js')}}" type="text/javascript"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+    <script src="{{asset('assets/global/plugins/gmaps/gmaps.min.js')}}" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+    <script src="{{asset('assets/global/scripts/app.min.js')}}" type="text/javascript"></script>
+    <!-- END THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN THEME LAYOUT SCRIPTS -->
+    <script src="{{asset('assets/layouts/layout/scripts/layout.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/layouts/layout/scripts/demo.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/layouts/global/scripts/quick-sidebar.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('assets/layouts/global/scripts/quick-nav.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('vendor/unisharp/laravel-ckeditor/ckeditor.js')}}"></script>
+    <script>
+        CKEDITOR.replace( 'placeTextarea' );
+    </script>
+@endsection
